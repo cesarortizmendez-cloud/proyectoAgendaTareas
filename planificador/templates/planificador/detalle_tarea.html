@@ -1,0 +1,22 @@
+{% extends "planificador/base.html" %}
+
+{% block titulo %}{{ titulo_pagina }} | Agenda de estudio{% endblock %}
+
+{% block contenido %}
+    <h2>{{ tarea.titulo }}</h2>
+
+    <p><strong>Materia:</strong> {{ tarea.materia.nombre }}</p>
+    <p><strong>Descripción:</strong> {{ tarea.descripcion|default:"Sin descripción" }}</p>
+    <p><strong>Fecha de entrega:</strong> {{ tarea.fecha_entrega }}</p>
+    <p><strong>Prioridad:</strong> {{ tarea.get_prioridad_display }}</p>
+
+    {% if tarea.completada %}
+        <p><strong>Estado:</strong> Completada</p>
+    {% else %}
+        <p><strong>Estado:</strong> Pendiente</p>
+    {% endif %}
+
+    <p>
+        <a href="{% url 'lista_tareas' %}">Volver a la lista de tareas</a>
+    </p>
+{% endblock %}

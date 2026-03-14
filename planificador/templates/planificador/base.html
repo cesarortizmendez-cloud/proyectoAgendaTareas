@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block titulo %}Agenda de estudio{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>Agenda de estudio</h1>
+        <nav>
+            <a href="{% url 'inicio' %}">Inicio</a> |    !*** enlace a la vista de inicio, usando el nombre de la URL definido en urls.py para generar el enlace correcto***!
+
+            <a href="{% url 'lista_tareas' %}">Tareas</a> |    !*** enlace a la vista de lista de tareas, usando el nombre de la URL definido en urls.py para generar el enlace correcto***!
+        </nav>
+        <hr>
+    </header>
+
+    <main>
+        {% block contenido %}
+        {% endblock %}
+    </main>
+</body>
+</html>

@@ -1,20 +1,19 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ titulo }}</title>
-</head>
-<body>
-    <h1>{{ titulo }}</h1>
-    <p>{{ mensaje }}</p>
+{% extends "planificador/base.html" %}
 
-    <hr>
+{% block titulo %}{{ titulo_pagina }} | Agenda de estudio{% endblock %}
 
-    <h2>Próximos pasos</h2>
+{% block contenido %}
+    <h2>Bienvenido</h2>
+    <p>Tu proyecto Django ya está funcionando y ahora usa datos reales.</p>
+
+    <h3>Resumen</h3>
     <ul>
-        <li>Crear el modelo de materias</li>
-        <li>Crear el modelo de tareas</li>
-        <li>Registrar modelos en el admin</li>
+        <li>Total de materias: {{ total_materias }}</li>
+        <li>Total de tareas: {{ total_tareas }}</li>
+        <li>Tareas pendientes: {{ tareas_pendientes }}</li>
     </ul>
-</body>
-</html>
+
+    <p>
+        <a href="{% url 'lista_tareas' %}">Ver todas las tareas</a>
+    </p>
+{% endblock %}
