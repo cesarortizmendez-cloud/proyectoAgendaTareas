@@ -1,0 +1,20 @@
+# entorno virtual
+.venv/
+venv/
+
+# python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# django
+db.sqlite3
+
+# variables de entorno
+.env
+
+# editores / sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
