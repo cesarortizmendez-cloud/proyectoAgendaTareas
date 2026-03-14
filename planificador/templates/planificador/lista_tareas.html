@@ -5,6 +5,10 @@
 {% block contenido %}
     <h2>Lista de tareas</h2>
 
+    <p>
+        <a href="{% url 'crear_tarea' %}">Crear nueva tarea</a>
+    </p>
+
     {% if tareas %}
         <ul>
             {% for tarea in tareas %}
@@ -24,6 +28,12 @@
                     {% else %}
                         <p><strong>Estado:</strong> Pendiente</p>
                     {% endif %}
+
+                    <p>
+                        <a href="{% url 'detalle_tarea' tarea.id %}">Ver detalle</a> |
+                        <a href="{% url 'editar_tarea' tarea.id %}">Editar</a> |
+                        <a href="{% url 'eliminar_tarea' tarea.id %}">Eliminar</a>
+                    </p>
 
                     <hr>
                 </li>

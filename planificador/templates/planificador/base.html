@@ -8,12 +8,21 @@
     <header>
         <h1>Agenda de estudio</h1>
         <nav>
-            <a href="{% url 'inicio' %}">Inicio</a> |    !*** enlace a la vista de inicio, usando el nombre de la URL definido en urls.py para generar el enlace correcto***!
-
-            <a href="{% url 'lista_tareas' %}">Tareas</a> |    !*** enlace a la vista de lista de tareas, usando el nombre de la URL definido en urls.py para generar el enlace correcto***!
+            <a href="{% url 'inicio' %}">Inicio</a> |
+            <a href="{% url 'lista_tareas' %}">Tareas</a> |
+            <a href="{% url 'crear_tarea' %}">Nueva tarea</a>
         </nav>
         <hr>
     </header>
+
+    {% if messages %}
+        <section>
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+            <hr>
+        </section>
+    {% endif %}
 
     <main>
         {% block contenido %}

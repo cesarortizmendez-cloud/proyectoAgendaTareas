@@ -1,0 +1,20 @@
+{% extends "planificador/base.html" %}
+
+{% block titulo %}{{ titulo_pagina }} | Agenda de estudio{% endblock %}
+
+{% block contenido %}
+    <h2>Confirmar eliminación</h2>
+
+    <p>Vas a eliminar la tarea: <strong>{{ tarea.titulo }}</strong></p>
+    <p>Materia: {{ tarea.materia.nombre }}</p>
+    <p>Fecha de entrega: {{ tarea.fecha_entrega }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Sí, eliminar tarea</button>
+    </form>
+
+    <p>
+        <a href="{% url 'detalle_tarea' tarea.id %}">Cancelar y volver al detalle</a>
+    </p>
+{% endblock %}
