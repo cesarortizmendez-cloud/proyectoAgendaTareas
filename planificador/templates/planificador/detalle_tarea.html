@@ -3,25 +3,62 @@
 {% block titulo %}{{ titulo_pagina }} | Agenda de estudio{% endblock %}
 
 {% block contenido %}
-    <h2>{{ tarea.titulo }}</h2>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="mb-1">{{ tarea.titulo }}</h2>
+        <p class="text-muted mb-0">Detalle completo de la tarea</p>
+    </div>
 
-    <p><strong>Materia:</strong> {{ tarea.materia.nombre }}</p>
-    <p><strong>Descripción:</strong> {{ tarea.descripcion|default:"Sin descripción" }}</p>
-    <p><strong>Fecha de entrega:</strong> {{ tarea.fecha_entrega }}</p>
-    <p><strong>Prioridad:</strong> {{ tarea.get_prioridad_display }}</p>
+    <div class="d-flex gap-2">
+        <a href="{% url 'editar_tarea' tarea.id %}" class="btn btn-outline-secondary">
+            Editar
+        </a>
+        <a href="{% url 'eliminar_tarea' tarea.id %}" class="btn btn-outline-danger">
+            Eliminar
+        </a>
+    </div>
+</div>
 
-    {% if tarea.completada %}
-        <p><strong>Estado:</strong> Completada</p>
-    {% else %}
-        <p><strong>Estado:</strong> Pendiente</p>
-    {% endif %}
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <strong>Materia:</strong>
+                <div>{{ tarea.materia.nombre }}</div>
+            </div>
 
-    <p>
-        <a href="{% url 'editar_tarea' tarea.id %}">Editar esta tarea</a> |
-        <a href="{% url 'eliminar_tarea' tarea.id %}">Eliminar esta tarea</a>
-    </p>
+            <div class="col-md-6">
+                <strong>Fecha de entrega:</strong>
+                <div>{{ tarea.fecha_entrega }}</div>
+            </div>
 
-    <p>
-        <a href="{% url 'lista_tareas' %}">Volver a la lista de tareas</a>
-    </p>
+            <div class="col-md-6">
+                <strong>Prioridad:</strong>
+                <div>{{ tarea.get_prioridad_display }}</div>
+            </div>
+
+            <div class="col-md-6">
+                <strong>Estado:</strong>
+                <div>
+                    {% if tarea.completada %}
+                        <span class="badge text-bg-success">Completada</span>
+                    {% else %}
+                        <span class="badge text-bg-secondary">Pendiente</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <h5>Descripción</h5>
+        <p class="mb-0">{{ tarea.descripcion|default:"Sin descripción" }}</p>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'lista_tareas' %}" class="btn btn-outline-primary">
+        Volver a la lista
+    </a>
+</div>
 {% endblock %}

@@ -3,59 +3,111 @@
 {% block titulo %}{{ titulo_pagina }} | Agenda de estudio{% endblock %}
 
 {% block contenido %}
-    <h2>{{ titulo_pagina }}</h2>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="mb-1">{{ titulo_pagina }}</h2>
+        <p class="text-muted mb-0">Administra tus tareas por prioridad y estado.</p>
+    </div>
 
-    <p>
-        <a href="{% url 'crear_tarea' %}">Crear nueva tarea</a>
-    </p>
+    <a href="{% url 'crear_tarea' %}" class="btn btn-primary">
+        Crear nueva tarea
+    </a>
+</div>
 
-    {% if tareas %}
-        <ul>
-            {% for tarea in tareas %}
-                <li>
-                    <h3>
-                        <a href="{% url 'detalle_tarea' tarea.id %}">
-                            {{ tarea.titulo }}
-                        </a>
-                    </h3>
+{% if tareas %}
+    <div class="row g-3">
+        {% for tarea in tareas %}
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                            <div>
+                                <h5 class="card-title mb-1">
+                                    <a class="text-decoration-none" href="{% url 'detalle_tarea' tarea.id %}">
+                                        {{ tarea.titulo }}
+                                    </a>
+                                </h5>
+                                <p class="text-muted mb-2">
+                                    {{ tarea.materia.nombre }} · Entrega: {{ tarea.fecha_entrega }}
+                                </p>
+                            </div>
 
-                    <p><strong>Materia:</strong> {{ tarea.materia.nombre }}</p>
-                    <p><strong>Fecha de entrega:</strong> {{ tarea.fecha_entrega }}</p>
-                    <p><strong>Prioridad:</strong> {{ tarea.get_prioridad_display }}</p>
+                            <div class="d-flex gap-2 flex-wrap">
+                                {% if tarea.prioridad == "alta" %}
+                                    <span class="badge text-bg-danger">Alta</span>
+                                {% elif tarea.prioridad == "media" %}
+                                    <span class="badge text-bg-warning">Media</span>
+                                {% else %}
+                                    <span class="badge text-bg-primary">Baja</span>
+                                {% endif %}
 
-                    {% if tarea.completada %}
-                        <p><strong>Estado:</strong> Completada</p>
-                    {% else %}
-                        <p><strong>Estado:</strong> Pendiente</p>
-                    {% endif %}
+                                {% if tarea.completada %}
+                                    <span class="badge text-bg-success">Completada</span>
+                                {% else %}
+                                    <span class="badge text-bg-secondary">Pendiente</span>
+                                {% endif %}
+                            </div>
+                        </div>
 
-                    <p>
-                        <a href="{% url 'detalle_tarea' tarea.id %}">Ver detalle</a> |
-                        <a href="{% url 'editar_tarea' tarea.id %}">Editar</a> |
-                        <a href="{% url 'eliminar_tarea' tarea.id %}">Eliminar</a>
-                    </p>
+                        <p class="card-text mt-3 mb-3">
+                            {{ tarea.descripcion|default:"Sin descripción" }}
+                        </p>
 
-                    <hr>
-                </li>
-            {% endfor %}
-        </ul>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{% url 'detalle_tarea' tarea.id %}" class="btn btn-outline-primary btn-sm">
+                                Ver detalle
+                            </a>
+                            <a href="{% url 'editar_tarea' tarea.id %}" class="btn btn-outline-secondary btn-sm">
+                                Editar
+                            </a>
+                            <a href="{% url 'eliminar_tarea' tarea.id %}" class="btn btn-outline-danger btn-sm">
+                                Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 
-        {% if is_paginated %}
-            <nav>
+    {% if is_paginated %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center flex-wrap">
                 {% if page_obj.has_previous %}
-                    <a href="?page=1">Primera</a>
-                    <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">Primera</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                    </li>
                 {% endif %}
 
-                <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                    </span>
+                </li>
 
                 {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
-                    <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+                    </li>
                 {% endif %}
-            </nav>
-        {% endif %}
-    {% else %}
-        <p>No tienes tareas registradas.</p>
+            </ul>
+        </nav>
     {% endif %}
+{% else %}
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+            <h4 class="mb-3">No tienes tareas registradas</h4>
+            <p class="text-muted">Crea tu primera tarea para comenzar.</p>
+            <a href="{% url 'crear_tarea' %}" class="btn btn-primary">
+                Crear primera tarea
+            </a>
+        </div>
+    </div>
+{% endif %}
 {% endblock %}

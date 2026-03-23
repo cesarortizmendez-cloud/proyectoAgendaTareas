@@ -3,19 +3,58 @@
 {% block titulo %}{{ titulo_pagina }} | Agenda de estudio{% endblock %}
 
 {% block contenido %}
-    <h2>Bienvenido</h2>
+<div class="p-4 p-md-5 mb-4 bg-white rounded-4 shadow-sm border">
+    <div class="col-lg-8">
+        <h1 class="display-6 fw-bold">Organiza tu estudio con una interfaz profesional</h1>
+        <p class="lead text-muted mb-4">
+            Gestiona tareas, materias, prioridades y fechas de entrega en un solo lugar.
+        </p>
 
-    {% if user.is_authenticated %}
-        <p>Resumen de tu cuenta.</p>
-        <ul>
-            <li>Total de materias: {{ total_materias }}</li>
-            <li>Total de tareas: {{ total_tareas }}</li>
-            <li>Tareas pendientes: {{ tareas_pendientes }}</li>
-        </ul>
+        {% if user.is_authenticated %}
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'lista_tareas' %}" class="btn btn-primary">
+                    Ver mis tareas
+                </a>
+                <a href="{% url 'crear_tarea' %}" class="btn btn-outline-primary">
+                    Crear tarea
+                </a>
+            </div>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary">
+                Iniciar sesión
+            </a>
+        {% endif %}
+    </div>
+</div>
 
-        <p><a href="{% url 'lista_tareas' %}">Ir a mis tareas</a></p>
-    {% else %}
-        <p>Inicia sesión para ver y gestionar tus tareas.</p>
-        <p><a href="{% url 'login' %}">Iniciar sesión</a></p>
-    {% endif %}
+{% if user.is_authenticated %}
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-2">Materias</p>
+                    <h2 class="fw-bold mb-0">{{ total_materias }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-2">Tareas</p>
+                    <h2 class="fw-bold mb-0">{{ total_tareas }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-2">Pendientes</p>
+                    <h2 class="fw-bold mb-0">{{ tareas_pendientes }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
 {% endblock %}

@@ -3,24 +3,46 @@
 {% block titulo %}Iniciar sesión | Agenda de estudio{% endblock %}
 
 {% block contenido %}
-    <h2>Iniciar sesión</h2>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="mb-3">Iniciar sesión</h2>
+                <p class="text-muted mb-4">Accede a tu panel de tareas.</p>
 
-    {% if form.errors %}
-        <p>Usuario o contraseña incorrectos.</p>
-    {% endif %}
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        Usuario o contraseña incorrectos.
+                    </div>
+                {% endif %}
 
-    {% if next and user.is_authenticated %}
-        <p>No tienes permisos para entrar a esa página con esta cuenta.</p>
-    {% endif %}
+                <form method="post">
+                    {% csrf_token %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">
+                                {{ field.label }}
+                            </label>
+                            <input
+                                type="{% if field.name == 'password' %}password{% else %}text{% endif %}"
+                                name="{{ field.html_name }}"
+                                id="{{ field.id_for_label }}"
+                                class="form-control"
+                            >
+                        </div>
+                    {% endfor %}
 
-        {% if next %}
-            <input type="hidden" name="next" value="{{ next }}">
-        {% endif %}
+                    {% if next %}
+                        <input type="hidden" name="next" value="{{ next }}">
+                    {% endif %}
 
-        <button type="submit">Entrar</button>
-    </form>
+                    <button type="submit" class="btn btn-primary w-100">
+                        Entrar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
