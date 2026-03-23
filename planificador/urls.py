@@ -8,10 +8,12 @@ from .views import (
     EliminarTareaView,
     InicioView,
     ListaTareasView,
+    RegistroUsuarioView,
 )
 
 urlpatterns = [
     path("", InicioView.as_view(), name="inicio"),
+     path("registro/", RegistroUsuarioView.as_view(), name="registro"),
     path("tareas/", ListaTareasView.as_view(), name="lista_tareas"),
     path("tareas/nueva/", CrearTareaView.as_view(), name="crear_tarea"),
     path("tareas/<int:tarea_id>/", DetalleTareaView.as_view(), name="detalle_tarea"),

@@ -3,8 +3,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
 
-from .forms import FormularioTarea
+from .forms import FormularioTarea, FormularioRegistroUsuario
 from .models import Materia, Tarea
+from django.contrib.auth import login
+from django.contrib.messages.views import SuccessMessageMixin
+
 
 
 class InicioView(TemplateView):
@@ -122,3 +125,19 @@ class EliminarTareaView(LoginRequiredMixin, DeleteView):
     def form_valid(self, form):
         messages.success(self.request, f'La tarea "{self.object.titulo}" fue eliminada correctamente.')
         return super().form_valid(form)
+    
+class RegistroUsuarioView(SuccessMessageMixin, CreateView):
+    form_class = FormularioRegistroUsuario
+    template_name = "registration/registro.html"
+    success_url = reverse_lazy("lista_tareas")
+    success_message = "Tu cuenta fue creada correctamente."
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("lista_tareas")
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        respuesta = super().form_valid(form)
+        login(self.request, self.object)
+        return respuesta

@@ -59,6 +59,9 @@
                             </button>
                         </form>
                     {% else %}
+                        <a href="{% url 'registro' %}" class="btn btn-outline-primary btn-sm">
+                            Crear cuenta
+                        </a>
                         <a href="{% url 'login' %}" class="btn btn-primary btn-sm">
                             Iniciar sesión
                         </a>
