@@ -3,7 +3,7 @@
 {% block titulo %}{{ titulo_pagina }} | Agenda de estudio{% endblock %}
 
 {% block contenido %}
-    <h2>Lista de tareas</h2>
+    <h2>{{ titulo_pagina }}</h2>
 
     <p>
         <a href="{% url 'crear_tarea' %}">Crear nueva tarea</a>
@@ -39,7 +39,23 @@
                 </li>
             {% endfor %}
         </ul>
+
+        {% if is_paginated %}
+            <nav>
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">Primera</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                {% endif %}
+
+                <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+                {% endif %}
+            </nav>
+        {% endif %}
     {% else %}
-        <p>No hay tareas registradas todavía.</p>
+        <p>No tienes tareas registradas.</p>
     {% endif %}
 {% endblock %}

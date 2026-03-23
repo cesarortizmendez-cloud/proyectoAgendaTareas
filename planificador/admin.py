@@ -9,10 +9,9 @@ class MateriaAdmin(admin.ModelAdmin):  #clase para personalizar la administraci�
     list_display = ("nombre", "creada_en") #campos que se mostrarán en la lista de materias en la interfaz de administración
     search_fields = ("nombre",) #campos que se podrán buscar en la interfaz de administración para facilitar la búsqueda de materias
 
-
-@admin.register(Tarea) #esto registra el modelo Tarea en la interfaz de administración de Django, permitiendo gestionar las tareas desde el panel de administración
+@admin.register(Tarea)
 class TareaAdmin(admin.ModelAdmin):
-    list_display = ("titulo", "materia", "fecha_entrega", "prioridad", "completada")
-    list_filter = ("prioridad", "completada", "materia")
+    list_display = ("titulo", "usuario", "materia", "fecha_entrega", "prioridad", "completada")
+    list_filter = ("usuario", "prioridad", "completada", "materia")
     search_fields = ("titulo", "descripcion")
     list_editable = ("completada",)

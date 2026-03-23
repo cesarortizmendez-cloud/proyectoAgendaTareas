@@ -4,16 +4,18 @@
 
 {% block contenido %}
     <h2>Bienvenido</h2>
-    <p>Tu proyecto Django ya está funcionando y ahora usa datos reales.</p>
 
-    <h3>Resumen</h3>
-    <ul>
-        <li>Total de materias: {{ total_materias }}</li>
-        <li>Total de tareas: {{ total_tareas }}</li>
-        <li>Tareas pendientes: {{ tareas_pendientes }}</li>
-    </ul>
+    {% if user.is_authenticated %}
+        <p>Resumen de tu cuenta.</p>
+        <ul>
+            <li>Total de materias: {{ total_materias }}</li>
+            <li>Total de tareas: {{ total_tareas }}</li>
+            <li>Tareas pendientes: {{ tareas_pendientes }}</li>
+        </ul>
 
-    <p>
-        <a href="{% url 'lista_tareas' %}">Ver todas las tareas</a>
-    </p>
+        <p><a href="{% url 'lista_tareas' %}">Ir a mis tareas</a></p>
+    {% else %}
+        <p>Inicia sesión para ver y gestionar tus tareas.</p>
+        <p><a href="{% url 'login' %}">Iniciar sesión</a></p>
+    {% endif %}
 {% endblock %}

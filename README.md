@@ -1,6 +1,10 @@
 
 proyecto creado por césar ortiz méndez 14/03/2026
 
+sólo para hacer mas fácil las pruebas de la aplicación se registra:
+super usuario: cesar1234
+pasword: 123456789*
+
 ## Objetivo del proyecto
 
 La aplicación permite organizar una agenda de estudio con:

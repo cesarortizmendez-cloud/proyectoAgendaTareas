@@ -19,5 +19,7 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("cuentas/", include("django.contrib.auth.urls")), #se incluye el sistema de autenticación de Django para manejar el inicio de sesión, cierre de sesión y otras funcionalidades relacionadas con las cuentas de usuario.
     path('', include('planificador.urls')), #se incluye el archivo urls.py de la app planificador para que las rutas definidas en ese archivo sean reconocidas por el proyecto
 ]
+

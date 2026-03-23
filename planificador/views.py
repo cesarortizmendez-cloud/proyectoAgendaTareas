@@ -1,98 +1,124 @@
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
 
 from .forms import FormularioTarea
 from .models import Materia, Tarea
 
 
-def inicio(request):
-    total_materias = Materia.objects.count()
-    total_tareas = Tarea.objects.count()
-    tareas_pendientes = Tarea.objects.filter(completada=False).count()
+class InicioView(TemplateView):
+    template_name = "planificador/inicio.html"
 
-    contexto = {
-        "titulo_pagina": "Inicio",
-        "total_materias": total_materias,
-        "total_tareas": total_tareas,
-        "tareas_pendientes": tareas_pendientes,
-    }
-    return render(request, "planificador/inicio.html", contexto)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
+        if self.request.user.is_authenticated:
+            tareas_usuario = Tarea.objects.filter(usuario=self.request.user)
+        else:
+            tareas_usuario = Tarea.objects.none()
 
-def lista_tareas(request):
-    tareas = Tarea.objects.select_related("materia").all()
-
-    contexto = {
-        "titulo_pagina": "Lista de tareas",
-        "tareas": tareas,
-    }
-    return render(request, "planificador/lista_tareas.html", contexto)
+        context.update({
+            "titulo_pagina": "Inicio",
+            "total_materias": Materia.objects.count(),
+            "total_tareas": tareas_usuario.count(),
+            "tareas_pendientes": tareas_usuario.filter(completada=False).count(),
+        })
+        return context
 
 
-def detalle_tarea(request, tarea_id):
-    tarea = get_object_or_404(Tarea.objects.select_related("materia"), id=tarea_id)
+class ListaTareasView(LoginRequiredMixin, ListView):
+    model = Tarea
+    template_name = "planificador/lista_tareas.html"
+    context_object_name = "tareas"
+    paginate_by = 5
 
-    contexto = {
-        "titulo_pagina": f"Detalle de {tarea.titulo}",
-        "tarea": tarea,
-    }
-    return render(request, "planificador/detalle_tarea.html", contexto)
+    def get_queryset(self):
+        return (
+            Tarea.objects.select_related("materia")
+            .filter(usuario=self.request.user)
+            .order_by("completada", "fecha_entrega", "titulo")
+        )
 
-
-def crear_tarea(request):
-    if request.method == "POST":
-        formulario = FormularioTarea(request.POST)
-
-        if formulario.is_valid():
-            formulario.save()
-            messages.success(request, "La tarea fue creada correctamente.")
-            return redirect("lista_tareas")
-    else:
-        formulario = FormularioTarea()
-
-    contexto = {
-        "titulo_pagina": "Nueva tarea",
-        "titulo_formulario": "Crear tarea",
-        "boton_envio": "Guardar tarea",
-        "formulario": formulario,
-    }
-    return render(request, "planificador/formulario_tarea.html", contexto)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["titulo_pagina"] = "Mis tareas"
+        return context
 
 
-def editar_tarea(request, tarea_id):
-    tarea = get_object_or_404(Tarea, id=tarea_id)
+class DetalleTareaView(LoginRequiredMixin, DetailView):
+    model = Tarea
+    template_name = "planificador/detalle_tarea.html"
+    context_object_name = "tarea"
+    pk_url_kwarg = "tarea_id"
 
-    if request.method == "POST":
-        formulario = FormularioTarea(request.POST, instance=tarea)
+    def get_queryset(self):
+        return Tarea.objects.select_related("materia").filter(usuario=self.request.user)
 
-        if formulario.is_valid():
-            formulario.save()
-            messages.success(request, "La tarea fue actualizada correctamente.")
-            return redirect("detalle_tarea", tarea_id=tarea.id)
-    else:
-        formulario = FormularioTarea(instance=tarea)
-
-    contexto = {
-        "titulo_pagina": f"Editar {tarea.titulo}",
-        "titulo_formulario": "Editar tarea",
-        "boton_envio": "Guardar cambios",
-        "formulario": formulario,
-        "tarea": tarea,
-    }
-    return render(request, "planificador/formulario_tarea.html", contexto)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["titulo_pagina"] = f"Detalle de {self.object.titulo}"
+        return context
 
 
-def eliminar_tarea(request, tarea_id):
-    tarea = get_object_or_404(Tarea, id=tarea_id)
+class CrearTareaView(LoginRequiredMixin, CreateView):
+    model = Tarea
+    form_class = FormularioTarea
+    template_name = "planificador/formulario_tarea.html"
+    success_url = reverse_lazy("lista_tareas")
 
-    if request.method == "POST":
-        titulo_tarea = tarea.titulo
-        tarea.delete()
-        messages.success(request, f'La tarea "{titulo_tarea}" fue eliminada correctamente.')
-        return redirect("lista_tareas")
+    def form_valid(self, form):
+        form.instance.usuario = self.request.user
+        messages.success(self.request, "La tarea fue creada correctamente.")
+        return super().form_valid(form)
 
-    contexto = {
-        "titulo_pagina": f"Eliminar {tarea.titulo}",
-        "tarea": tarea,
-    }
-    return render(request, "planificador/confirmar_eliminar_tarea.html", contexto)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "titulo_pagina": "Nueva tarea",
+            "titulo_formulario": "Crear tarea",
+            "boton_envio": "Guardar tarea",
+        })
+        return context
+
+
+class EditarTareaView(LoginRequiredMixin, UpdateView):
+    model = Tarea
+    form_class = FormularioTarea
+    template_name = "planificador/formulario_tarea.html"
+    context_object_name = "tarea"
+    pk_url_kwarg = "tarea_id"
+
+    def get_queryset(self):
+        return Tarea.objects.filter(usuario=self.request.user)
+
+    def form_valid(self, form):
+        messages.success(self.request, "La tarea fue actualizada correctamente.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("detalle_tarea", kwargs={"tarea_id": self.object.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "titulo_pagina": f"Editar {self.object.titulo}",
+            "titulo_formulario": "Editar tarea",
+            "boton_envio": "Guardar cambios",
+        })
+        return context
+
+
+class EliminarTareaView(LoginRequiredMixin, DeleteView):
+    model = Tarea
+    template_name = "planificador/confirmar_eliminar_tarea.html"
+    context_object_name = "tarea"
+    pk_url_kwarg = "tarea_id"
+    success_url = reverse_lazy("lista_tareas")
+
+    def get_queryset(self):
+        return Tarea.objects.filter(usuario=self.request.user)
+
+    def form_valid(self, form):
+        messages.success(self.request, f'La tarea "{self.object.titulo}" fue eliminada correctamente.')
+        return super().form_valid(form)

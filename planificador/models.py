@@ -1,5 +1,6 @@
 
 # Create your models here.
+from django.conf import settings
 from django.db import models
 
 
@@ -17,17 +18,24 @@ class Materia(models.Model):
         return self.nombre #representación legible de la materia, se muestra en la interfaz de administración y en otros lugares donde se necesite mostrar el nombre de la materia
 
 
-class Tarea(models.Model): #modelo para representar las tareas asociadas a una materia
-    PRIORIDAD_OPCIONES = [  #definición de las opciones de prioridad para las tareas
+class Tarea(models.Model):
+    PRIORIDAD_OPCIONES = [
         ("baja", "Baja"),
         ("media", "Media"),
         ("alta", "Alta"),
     ]
 
-    materia = models.ForeignKey( #relación de clave foránea con el modelo
-        Materia, 
-        on_delete=models.CASCADE, #si se borra una materia, se borran todas sus tareas asociadas
-        related_name="tareas"     #permite acceder a las tareas de una materia usando materia.tareas
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="tareas",
+        null=True,
+        blank=True,
+    )
+    materia = models.ForeignKey(
+        Materia,
+        on_delete=models.CASCADE,
+        related_name="tareas",
     )
     titulo = models.CharField(max_length=150)
     descripcion = models.TextField(blank=True)
@@ -35,13 +43,13 @@ class Tarea(models.Model): #modelo para representar las tareas asociadas a una m
     prioridad = models.CharField(
         max_length=10,
         choices=PRIORIDAD_OPCIONES,
-        default="media"
+        default="media",
     )
     completada = models.BooleanField(default=False)
     creada_en = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ["fecha_entrega", "titulo"]
+        ordering = ["completada", "fecha_entrega", "titulo"]
         verbose_name = "tarea"
         verbose_name_plural = "tareas"
 

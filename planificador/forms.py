@@ -30,8 +30,6 @@ class FormularioTarea(forms.ModelForm):
         titulo = self.cleaned_data["titulo"].strip()
 
         if len(titulo) < 3:
-            raise forms.ValidationError(
-                "El título debe tener al menos 3 caracteres."
-            )
+            raise forms.ValidationError("El título debe tener al menos 3 caracteres.")
 
         return titulo

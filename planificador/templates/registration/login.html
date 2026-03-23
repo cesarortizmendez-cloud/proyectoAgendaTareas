@@ -1,0 +1,26 @@
+{% extends "planificador/base.html" %}
+
+{% block titulo %}Iniciar sesión | Agenda de estudio{% endblock %}
+
+{% block contenido %}
+    <h2>Iniciar sesión</h2>
+
+    {% if form.errors %}
+        <p>Usuario o contraseña incorrectos.</p>
+    {% endif %}
+
+    {% if next and user.is_authenticated %}
+        <p>No tienes permisos para entrar a esa página con esta cuenta.</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <button type="submit">Entrar</button>
+    </form>
+{% endblock %}

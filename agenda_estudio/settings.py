@@ -116,3 +116,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+#estas lineas controlan la redirección después de iniciar sesión, cerrar sesión o intentar acceder a una página que requiere autenticación sin estar autenticado.
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "lista_tareas"
+LOGOUT_REDIRECT_URL = "login"
+
